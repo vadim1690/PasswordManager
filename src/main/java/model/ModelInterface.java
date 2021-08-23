@@ -18,7 +18,7 @@ public interface ModelInterface {
     void editApplicationInformation(String officialName,String information) throws ApplicationAlreadyExistException, ApplicationDoesNotExistException, IllegalApplicationNameException;
     void editUserInformation(String officialName,String userName,String information) throws ApplicationDoesNotExistException, UserNameDoesNotExistException, IllegalApplicationNameException, IllegalUserNameException;
     void modifyPassword(String officialName,String userName,String oldPassword,String newPassword) throws ApplicationDoesNotExistException, UserNameDoesNotExistException, UserPasswordAuthenticationException, IllegalApplicationNameException, IllegalUserNameException, IllegalPasswordException;
-    List<String> getAllApplicationForUserName(String userName) throws IllegalUserNameException;
+    List<String> getAllApplicationsForUserName(String userName) throws IllegalUserNameException, UserNameDoesNotExistException;
     Map<String,String> getUserNameAndPasswordForApplication(String officialName) throws ApplicationDoesNotExistException, IllegalApplicationNameException;
     Collection<ApplicationRecord> getAllApplications();
 

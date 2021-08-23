@@ -1,8 +1,6 @@
 package controller;
 
-import exceptions.ApplicationAlreadyExistException;
-import exceptions.ApplicationDoesNotExistException;
-import exceptions.UserNameAlreadyExistException;
+import exceptions.*;
 import model.ApplicationRecord;
 import model.ModelInterface;
 import view.UserInterface;
@@ -25,63 +23,67 @@ public class Controller implements UserInterface, ModelInterface {
 
     }
 
+
+
     @Override
-    public void registerController(UserInterface controller) {
-        model.registerController(controller);
+    public void addApplication(String officialName, String information) throws ApplicationAlreadyExistException, ApplicationDoesNotExistException, IllegalApplicationNameException {
+        model.addApplication(officialName, information);
     }
 
     @Override
-    public void addApplication(String officialName, String information) throws ApplicationAlreadyExistException {
-
+    public void addUserToApplication(String officialName, String userName, String password, String information) throws ApplicationDoesNotExistException, UserNameAlreadyExistException, IllegalUserNameException, IllegalPasswordException, IllegalApplicationNameException {
+        model.addUserToApplication(officialName, userName, password, information);
     }
 
     @Override
-    public void addUserToApplication(String officialName, String userName, String password, String information) throws ApplicationDoesNotExistException, UserNameAlreadyExistException {
-
+    public void removeApplication(String officialName) throws ApplicationDoesNotExistException, IllegalApplicationNameException {
+        model.removeApplication(officialName);
     }
 
     @Override
-    public void removeApplication(String officialName) {
-
+    public void removeUserForApplication(String officialName, String userName, String password) throws IllegalUserNameException, IllegalPasswordException, ApplicationDoesNotExistException, UserNameDoesNotExistException, UserPasswordAuthenticationException, IllegalApplicationNameException {
+        model.removeUserForApplication(officialName, userName, password);
     }
 
     @Override
-    public void removeUserForApplication(String officialName, String userName, String password) {
-
+    public void editApplicationInformation(String officialName, String information) throws ApplicationAlreadyExistException, ApplicationDoesNotExistException, IllegalApplicationNameException {
+        model.editApplicationInformation(officialName, information);
     }
 
     @Override
-    public void editApplicationInformation(String officialName, String information) throws ApplicationAlreadyExistException, ApplicationDoesNotExistException {
-
+    public void editUserInformation(String officialName, String userName, String information) throws IllegalUserNameException, ApplicationDoesNotExistException, UserNameDoesNotExistException, IllegalApplicationNameException {
+        model.editUserInformation(officialName, userName, information);
     }
 
     @Override
-    public void editUserInformation(String officialName, String userName, String information) {
-
+    public void modifyPassword(String officialName, String userName, String oldPassword, String newPassword) throws IllegalUserNameException, IllegalPasswordException, ApplicationDoesNotExistException, UserNameDoesNotExistException, UserPasswordAuthenticationException, IllegalApplicationNameException {
+        model.modifyPassword(officialName, userName, oldPassword, newPassword);
     }
 
+    //Fix this method it should not return the list, it should pass it to the according method in the view interface
     @Override
-    public void modifyPassword(String officialName, String userName, String oldPassword, String newPassword) {
-
+    public List<String> getAllApplicationsForUserName(String userName) throws IllegalUserNameException, UserNameDoesNotExistException {
+        return model.getAllApplicationsForUserName(userName);
     }
 
-    @Override
-    public List<String> getAllApplicationForUserName(String userName) {
-        return null;
-    }
 
+    //Fix this method it should not return the list, it should pass it to the according method in the view interface
     @Override
-    public Map<String, String> getUserNameAndPasswordForApplication(String officialName) {
-        return null;
+    public Map<String, String> getUserNameAndPasswordForApplication(String officialName) throws ApplicationDoesNotExistException, IllegalApplicationNameException {
+        return model.getUserNameAndPasswordForApplication(officialName);
     }
 
     @Override
     public Collection<ApplicationRecord> getAllApplications() {
-        return null;
+        return model.getAllApplications();
     }
 
     @Override
     public void registerController(ModelInterface controller) {
         view.registerController(controller);
+    }
+    @Override
+    public void registerController(UserInterface controller) {
+        model.registerController(controller);
     }
 }

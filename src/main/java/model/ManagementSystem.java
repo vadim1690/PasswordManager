@@ -90,8 +90,9 @@ public class ManagementSystem implements ModelInterface {
         getApplicationRecordByOfficialName(officialName).modifyPasswordForUser(userName,oldPassword,newPassword);
     }
 
+    //Fix this method it should not return the list, it should pass it to the according method in the view interface
     @Override
-    public List<String> getAllApplicationForUserName(String userName) throws IllegalUserNameException {
+    public List<String> getAllApplicationsForUserName(String userName) throws IllegalUserNameException, UserNameDoesNotExistException {
         List<String> applicationsList = new ArrayList<>();
         for (ApplicationRecord applicationRecord: applicationRecords.values()) {
             if (applicationRecord.getUserByUserName(userName)!=null)
@@ -100,22 +101,27 @@ public class ManagementSystem implements ModelInterface {
         return applicationsList;
     }
 
+    //Fix this method it should not return the list, it should pass it to the according method in the view interface
     @Override
     public Map<String, String> getUserNameAndPasswordForApplication(String officialName) throws ApplicationDoesNotExistException, IllegalApplicationNameException {
         checkIfApplicationNameIsValid(officialName);
         return getApplicationRecordByOfficialName(officialName).getUsersMap();
     }
 
+    //Fix this method it should not return the list, it should pass it to the according method in the view interface
     @Override
     public Collection<ApplicationRecord> getAllApplications(){
         return applicationRecords.values();
     }
 
+    //Fix this method it should not return the list, it should pass it to the according method in the view interface
     public ApplicationRecord getApplicationRecordByOfficialName(String officialName){
         return applicationRecords.get(officialName);
     }
 
-
-
-
+    //Fix this method it should not return the list, it should pass it to the according method in the view interface
+    //Application Records should not be accessible from outside the class, this method is only for test purposes.
+    public Map<String, ApplicationRecord> getApplicationRecords() {
+        return applicationRecords;
+    }
 }
