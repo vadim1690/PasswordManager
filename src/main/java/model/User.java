@@ -7,6 +7,7 @@ public class User {
     private String password;
     private String information;
     private LocalDate passwordLastModified;
+    private PasswordStrength passwordStrength;
 
 
     public User(String userName, String password) {
@@ -22,6 +23,13 @@ public class User {
      * */
     public String getUserName() {
         return userName;
+    }
+
+    public void setPasswordStrength(PasswordStrength passwordStrength){
+        this.passwordStrength = passwordStrength;
+    }
+    public PasswordStrength getPasswordStrength(){
+        return passwordStrength;
     }
 
     public String getPassword() {

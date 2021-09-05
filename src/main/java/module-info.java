@@ -4,9 +4,10 @@ module com.example.passwordmanager {
     requires junit;
 
 
-    opens SoftwareStarter to javafx.fxml;
-    opens Tests;
-    exports SoftwareStarter;
+    opens softwareStarter to javafx.fxml;
+    opens tests;
+    exports softwareStarter;
     exports controller;
     opens controller to javafx.fxml;
+    opens model to javafx.base;
 }

@@ -7,8 +7,8 @@ import java.util.Map;
 
 public class ApplicationRecord {
 
-    private String officialName;
-    private Map<String, User> users;
+    private final String officialName;
+    private final Map<String, User> users;
     private String information;
 
     public ApplicationRecord(String officialName) {
