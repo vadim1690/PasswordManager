@@ -2,6 +2,7 @@ package model;
 
 import exceptions.*;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,7 +23,7 @@ public class ApplicationRecord {
      * @param userName is the userName of the user to be added
      * @param password is the password of the user to be added
      */
-    public void addUser(String userName, String password, String information) throws UserNameAlreadyExistException, IllegalUserNameException, IllegalPasswordException {
+    public User addUser(String userName, String password, String information) throws UserNameAlreadyExistException, IllegalUserNameException, IllegalPasswordException {
         checkIllegalUserName(userName);
         checkIllegalPassword(password);
         checkIfUserNameExist(userName);
@@ -30,6 +31,7 @@ public class ApplicationRecord {
         User user = new User(userName, password);
         user.setInformation(information);
         users.put(userName, user);
+        return user;
     }
 
     public void editUserInformation(String userName, String information) throws UserNameDoesNotExistException, IllegalUserNameException {
@@ -75,10 +77,8 @@ public class ApplicationRecord {
     }
 
 
-    public Map<String, String> getUsersMap() {
-        Map<String, String> usersMap = new HashMap<>();
-        users.forEach((userName, user) -> usersMap.put(userName, user.getPassword()));
-        return usersMap;
+    public Collection<User> getUsersList() {
+        return users.values();
     }
 
     public int getNumberOfUsers() {

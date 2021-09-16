@@ -1,7 +1,6 @@
 package model;
 
 import exceptions.*;
-import view.UserInterface;
 
 import java.util.*;
 
@@ -9,7 +8,7 @@ public class ManagementSystem implements ModelInterface {
 
     private static ManagementSystem managementSystem;
 
-    private UserInterface controller;
+    
     private Map<String, ApplicationRecord> applicationRecords;
 
     private ManagementSystem() {
@@ -23,10 +22,7 @@ public class ManagementSystem implements ModelInterface {
     }
 
 
-    @Override
-    public void registerController(UserInterface controller) {
-        this.controller = controller;
-    }
+
 
     @Override
     public void addApplication(String officialName, String information) throws ApplicationAlreadyExistException, IllegalApplicationNameException, ApplicationDoesNotExistException {
@@ -44,9 +40,9 @@ public class ManagementSystem implements ModelInterface {
     }
 
     @Override
-    public void addUserToApplication(String officialName, String userName, String password, String information) throws ApplicationDoesNotExistException, UserNameAlreadyExistException, IllegalApplicationNameException, IllegalUserNameException, IllegalPasswordException {
+    public User addUserToApplication(String officialName, String userName, String password, String information) throws ApplicationDoesNotExistException, UserNameAlreadyExistException, IllegalApplicationNameException, IllegalUserNameException, IllegalPasswordException {
         checkIfApplicationNameIsValid(officialName);
-        applicationRecords.get(officialName).addUser(userName, password, information);
+       return applicationRecords.get(officialName).addUser(userName, password, information);
 
     }
 
@@ -103,9 +99,9 @@ public class ManagementSystem implements ModelInterface {
 
     //Fix this method it should not return the list, it should pass it to the according method in the view interface
     @Override
-    public Map<String, String> getUserNameAndPasswordForApplication(String officialName) throws ApplicationDoesNotExistException, IllegalApplicationNameException {
+    public Collection<User> getUserNameAndPasswordForApplication(String officialName) throws ApplicationDoesNotExistException, IllegalApplicationNameException {
         checkIfApplicationNameIsValid(officialName);
-        return getApplicationRecordByOfficialName(officialName).getUsersMap();
+        return getApplicationRecordByOfficialName(officialName).getUsersList();
     }
 
     //Fix this method it should not return the list, it should pass it to the according method in the view interface

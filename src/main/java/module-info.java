@@ -8,6 +8,7 @@ module com.example.passwordmanager {
     opens tests;
     exports softwareStarter;
     exports controller;
-    opens controller to javafx.fxml;
-    opens model to javafx.base;
+    exports model;
+    opens model to javafx.base, javafx.fxml;
+    opens controller to javafx.base, javafx.fxml;
 }
