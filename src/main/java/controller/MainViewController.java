@@ -1,11 +1,8 @@
 package controller;
 
-import exceptions.ApplicationDoesNotExistException;
-import exceptions.IllegalApplicationNameException;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -14,10 +11,10 @@ import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import model.ApplicationRecord;
 import model.ManagementSystem;
-import model.PasswordStrength;
 import model.User;
-import softwareStarter.Main;
+import starter.Main;
 import utilities.AlertUtilities;
 import utilities.FileUtilities;
 import utilities.FontUtilities;
@@ -25,7 +22,6 @@ import utilities.WindowUtilities;
 
 import java.io.IOException;
 import java.net.URL;
-import java.time.LocalDate;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -36,8 +32,6 @@ public class MainViewController implements Initializable {
     private final String USER_LAST_MODIFIED_PROPERTY = "passwordLastModified";
 
 
-    private Parent root;
-    private FXMLLoader loader;
     @FXML
     private ListView<Label> appsList;
     @FXML
@@ -47,7 +41,8 @@ public class MainViewController implements Initializable {
     @FXML
     private TableColumn<User, String> passwordColumn;
     @FXML
-    private TableColumn<User, LocalDate> lastModifiedColumn;
+    private TableColumn<User, String> lastModifiedColumn;
+
     @FXML
     private Button addApp;
     @FXML
@@ -59,29 +54,66 @@ public class MainViewController implements Initializable {
     @FXML
     private Button modifyPassword;
     @FXML
-    private Label passwordStrengthLabel;
-    @FXML
-    private Circle circle;
+    private Button generalInformation;
+
+
     @FXML
     private Text appInformationText;
     @FXML
     private Text userInformationText;
+    @FXML
+    private TextField usernameTextField;
+    @FXML
+    private TextField passwordTextField;
+
 
     @FXML
     private Label appInformationLabel;
     @FXML
     private Label userInformationLabel;
+    @FXML
+    private Label passwordStrengthLabel;
+    @FXML
+    private Label usernameLabel;
+    @FXML
+    private Label passwordLabel;
+
+    @FXML
+    private Circle circle;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         initTableColumns();
+        initAppList();
         disableTableNodes();
         disableListNodes();
+
+    }
+
+    private void initAppList() {
+
+        for (ApplicationRecord app : ManagementSystem.getInstance().getAllApplications()) {
+            Label appLabel = new Label(app.getOfficialName());
+            appLabel.setFont(FontUtilities.APPS_LIST_FONT);
+            appsList.getItems().add(appLabel);
+        }
+    }
+
+    @FXML
+    private void generalInformationClicked() {
+        Stage generalInformationStage = getStage(
+                WindowUtilities.GENERAL_INFORMATION_WINDOW_NAME,
+                WindowUtilities.GENERAL_INFORMATION_WINDOW_WIDTH,
+                WindowUtilities.GENERAL_INFORMATION_WINDOW_HEIGHT,
+                FileUtilities.GENERAL_INFORMATION_WINDOW_FXML);
+
+        generalInformationStage.show();
+
     }
 
 
     @FXML
-    public void addApp() {
+    private void addApp() {
         Stage addAppStage = getStage(
                 WindowUtilities.ADD_APP_WINDOW_NAME,
                 WindowUtilities.ADD_APP_WINDOW_WIDTH,
@@ -89,11 +121,12 @@ public class MainViewController implements Initializable {
                 FileUtilities.ADD_APP_WINDOW_FXML);
 
         addAppStage.show();
+
     }
 
 
     @FXML
-    public void addUserToApp() {
+    private void addUserToApp() {
 
         Stage addUserStage = getStage(
                 WindowUtilities.ADD_USER_WINDOW_NAME,
@@ -104,24 +137,55 @@ public class MainViewController implements Initializable {
 
     }
 
+    @FXML
+    private void modifyPasswordClicked() {
+        Stage ModifyPasswordStage = getStage(
+                WindowUtilities.MODIFY_PASSWORD_WINDOW_NAME,
+                WindowUtilities.MODIFY_PASSWORD_WINDOW_WIDTH,
+                WindowUtilities.MODIFY_PASSWORD_WINDOW_HEIGHT,
+                FileUtilities.MODIFY_PASSWORD_WINDOW_FXML);
+        ModifyPasswordStage.show();
+        disableTableNodes();
+
+    }
+
 
     @FXML
     private void tableClicked() {
         if (tableView.getItems().isEmpty())
             disableListNodes();
 
-        if (tableView.getSelectionModel().getSelectedItem() != null) {
+        else if (tableView.getSelectionModel().getSelectedItem() != null) {
             enableTableNodes();
-            userInformationText.setText(tableView.getSelectionModel().getSelectedItem().getInformation());
-            userInformationText.setFont(FontUtilities.TEXT_INFORMATION_FONT);
         }
     }
 
 
     @FXML
     private void removeUser() {
-        tableView.getItems().remove(tableView.getSelectionModel().getSelectedItem());
+        User userToDelete = tableView.getSelectionModel().getSelectedItem();
+        if (userToDelete == null)
+            return;
+
+        Optional result = AlertUtilities.deleteConfirmationAlert();
+        if (result.get() == ButtonType.OK) {
+            removeSelectedUserAfterConfirmation(userToDelete);
+        } else {
+            return;
+        }
         disableTableNodes();
+    }
+
+    private void removeSelectedUserAfterConfirmation(User userToDelete) {
+        try {
+            ManagementSystem.getInstance().removeUserForApplication(
+                    appsList.getSelectionModel().getSelectedItem().getText(),
+                    userToDelete.getUserName(),
+                    userToDelete.getPassword());
+            tableView.getItems().remove(userToDelete);
+        } catch (Exception e) {
+            AlertUtilities.errorAlert(e.getMessage());
+        }
     }
 
     @FXML
@@ -136,8 +200,6 @@ public class MainViewController implements Initializable {
                 return;
             }
         }
-
-        tableView.getItems().remove(tableView.getSelectionModel().getSelectedItem());
         disableTableNodes();
     }
 
@@ -185,9 +247,39 @@ public class MainViewController implements Initializable {
 
     private void enableListNodes() {
         removeApp.setDisable(false);
-        appInformationText.setText(ManagementSystem.getInstance().getApplicationRecordByOfficialName(appsList.getSelectionModel().getSelectedItem().getText()).getInformation());
-        appInformationText.setFont(FontUtilities.TEXT_INFORMATION_FONT);
-        appInformationLabel.setVisible(true);
+        setAppInformation();
+
+    }
+
+    private void setAppInformation() {
+        String information = ManagementSystem.getInstance().getApplicationRecordByOfficialName(appsList.getSelectionModel().getSelectedItem().getText()).getInformation();
+        if (information == null || information.isEmpty()) {
+            appInformationText.setText("");
+            appInformationLabel.setVisible(false);
+
+        } else {
+            appInformationText.setText(information);
+            appInformationText.setFont(FontUtilities.TEXT_INFORMATION_FONT);
+            appInformationLabel.setVisible(true);
+        }
+    }
+
+    private void setUserInformation() {
+        String information = tableView.getSelectionModel().getSelectedItem().getInformation();
+        if (information == null || information.isEmpty()) {
+            userInformationText.setText("");
+            userInformationLabel.setVisible(false);
+        } else {
+            userInformationText.setText(information);
+            userInformationText.setFont(FontUtilities.TEXT_INFORMATION_FONT);
+            userInformationLabel.setVisible(true);
+
+        }
+    }
+
+    private void setUsernameAndPasswordTextFields() {
+        usernameTextField.setText(tableView.getSelectionModel().getSelectedItem().getUserName());
+        passwordTextField.setText(tableView.getSelectionModel().getSelectedItem().getPassword());
     }
 
 
@@ -206,10 +298,15 @@ public class MainViewController implements Initializable {
         removeUser.setDisable(true);
         modifyPassword.setDisable(true);
         passwordStrengthLabel.setDisable(true);
-        circle.setFill(Color.WHITE);
+        usernameLabel.setVisible(false);
+        passwordLabel.setVisible(false);
+        usernameTextField.setVisible(false);
+        passwordTextField.setVisible(false);
         userInformationLabel.setVisible(false);
+        circle.setFill(Color.WHITE);
         userInformationText.setText("");
-
+        usernameTextField.clear();
+        passwordTextField.clear();
     }
 
     private void enableTableNodes() {
@@ -217,13 +314,17 @@ public class MainViewController implements Initializable {
         removeUser.setDisable(false);
         modifyPassword.setDisable(false);
         passwordStrengthLabel.setDisable(false);
+        usernameLabel.setVisible(true);
+        passwordLabel.setVisible(true);
+        usernameTextField.setVisible(true);
+        passwordTextField.setVisible(true);
         setPasswordStrengthLight();
-        userInformationLabel.setVisible(true);
-
+        setUserInformation();
+        setUsernameAndPasswordTextFields();
     }
 
+
     private void setPasswordStrengthLight() {
-        tableView.getSelectionModel().getSelectedItem().setPasswordStrength(PasswordStrength.MEDIUM);
         switch (tableView.getSelectionModel().getSelectedItem().getPasswordStrength()) {
             case STRONG: {
                 circle.setFill(Color.GREEN);
@@ -271,6 +372,15 @@ public class MainViewController implements Initializable {
                 addUserWindowController.setUserTable(tableView);
                 addUserWindowController.setAppList(appsList);
                 addUserWindowController.setAppName(appsList.getSelectionModel().getSelectedItem().getText());
+                break;
+
+            }
+
+            case WindowUtilities.MODIFY_PASSWORD_WINDOW_NAME: {
+                ModifyPasswordWindowController ModifyPasswordController = loader.getController();
+                ModifyPasswordController.setUserTable(tableView);
+                ModifyPasswordController.setAppList(appsList);
+                ModifyPasswordController.setUserName(tableView.getSelectionModel().getSelectedItem().getUserName());
                 break;
 
             }

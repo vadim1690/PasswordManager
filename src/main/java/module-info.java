@@ -2,11 +2,12 @@ module com.example.passwordmanager {
     requires javafx.controls;
     requires javafx.fxml;
     requires junit;
+    requires java.sql;
 
 
-    opens softwareStarter to javafx.fxml;
+    opens starter to javafx.fxml;
     opens tests;
-    exports softwareStarter;
+    exports starter;
     exports controller;
     exports model;
     opens model to javafx.base, javafx.fxml;

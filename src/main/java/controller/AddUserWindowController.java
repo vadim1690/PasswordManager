@@ -14,9 +14,9 @@ import java.util.ResourceBundle;
 public class AddUserWindowController implements Initializable {
 
 
-    private ListView<Label> appsList;
+    private ListView appsList;
 
-    private TableView<User> tableView;
+    private TableView tableView;
 
     @FXML
     private TextField tfUserName;

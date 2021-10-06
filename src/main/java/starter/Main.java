@@ -1,14 +1,15 @@
-package softwareStarter;
+package starter;
 
+import database.Datasource;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import model.ManagementSystem;
 import utilities.FileUtilities;
 import utilities.WindowUtilities;
 
-import java.io.File;
 import java.io.IOException;
 
 public class Main extends Application {
@@ -29,5 +30,19 @@ public class Main extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
 
+    }
+
+    @Override
+    public void init() throws Exception {
+        super.init();
+        Datasource.getInstance().open();
+        ManagementSystem.getInstance().readFromDatabase();
+    }
+
+    @Override
+    public void stop() throws Exception {
+        super.stop();
+        ManagementSystem.getInstance().saveToDatabase();
+        Datasource.getInstance().close();
     }
 }

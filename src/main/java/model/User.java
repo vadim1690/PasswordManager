@@ -1,20 +1,29 @@
 package model;
 
+import utilities.PasswordRegex;
+
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 public class User {
-    private String userName;
+    private static final  String DATE_PATTERN = "dd/MM/YYYY";
+
+    private final String userName;
     private String password;
     private String information;
-    private LocalDate passwordLastModified;
+    private String passwordLastModified;
     private PasswordStrength passwordStrength;
+
+
 
 
     public User(String userName, String password) {
         this.userName = userName;
         this.password = password;
-        passwordLastModified = LocalDate.now();
+        setPasswordStrength();
+        passwordLastModified =  DateTimeFormatter.ofPattern(DATE_PATTERN).format(LocalDate.now());
     }
+
 
 
     /**
@@ -25,8 +34,10 @@ public class User {
         return userName;
     }
 
-    public void setPasswordStrength(PasswordStrength passwordStrength){
-        this.passwordStrength = passwordStrength;
+
+
+    private void setPasswordStrength(){
+        passwordStrength = PasswordRegex.computePassword(password);
     }
     public PasswordStrength getPasswordStrength(){
         return passwordStrength;
@@ -36,7 +47,7 @@ public class User {
         return password;
     }
 
-    public LocalDate getPasswordLastModified() {
+    public String getPasswordLastModified() {
         return passwordLastModified;
     }
 
@@ -56,7 +67,8 @@ public class User {
      * */
     public void changePassword(String newPassword){
         this.password = newPassword;
-        passwordLastModified = LocalDate.now();
+        passwordLastModified = DateTimeFormatter.ofPattern(DATE_PATTERN).format(LocalDate.now());
+        setPasswordStrength();
     }
 
     public String getInformation() {
