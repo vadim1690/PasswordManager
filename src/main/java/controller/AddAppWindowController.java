@@ -1,5 +1,6 @@
 package controller;
 
+import exceptions.IllegalApplicationNameException;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -9,6 +10,7 @@ import utilities.AlertUtilities;
 import utilities.FontUtilities;
 
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.ResourceBundle;
 
 public class AddAppWindowController implements Initializable {
@@ -22,9 +24,6 @@ public class AddAppWindowController implements Initializable {
     @FXML
     private TextField tfInformation;
 
-    @FXML
-    private Button addButton;
-
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         tfOfficialName.setFocusTraversable(false);
@@ -34,7 +33,11 @@ public class AddAppWindowController implements Initializable {
     @FXML
     public void addApplication() {
         try {
+
+            checkIfApplicationNameIsIllegal(tfOfficialName.getText());
             ManagementSystem.getInstance().addApplication(tfOfficialName.getText(), tfInformation.getText());
+        } catch (SQLException e) {
+            AlertUtilities.sqlErrorAlert();
         } catch (Exception e) {
             AlertUtilities.errorAlert(e.getMessage());
             return;
@@ -42,12 +45,16 @@ public class AddAppWindowController implements Initializable {
         addToAppsList();
 
     }
+    private void checkIfApplicationNameIsIllegal(String officialName) throws IllegalApplicationNameException {
+        if (officialName == null || officialName.isEmpty())
+            throw new IllegalApplicationNameException();
+    }
 
     private void addToAppsList() {
         Label newAppLabel = new Label(tfOfficialName.getText());
         newAppLabel.setFont(FontUtilities.APPS_LIST_FONT);
         appsList.getItems().add(newAppLabel);
-        ((Stage) addButton.getScene().getWindow()).close();
+        ((Stage) tfOfficialName.getScene().getWindow()).close();
     }
 
 

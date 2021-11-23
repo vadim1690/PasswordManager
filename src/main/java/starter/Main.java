@@ -13,7 +13,6 @@ import utilities.WindowUtilities;
 import java.io.IOException;
 
 public class Main extends Application {
-    public static final String MAIN_STAGE_TITLE = "Password Manager";
 
     public static void main(String[] args) {
         launch();
@@ -24,7 +23,7 @@ public class Main extends Application {
 
 
         Parent root = FXMLLoader.load(Main.class.getResource(FileUtilities.MAIN_VIEW_WINDOW_FXML));
-        primaryStage.setTitle(MAIN_STAGE_TITLE);
+        primaryStage.setTitle(WindowUtilities.MAIN_VIEW_WINDOW_NAME);
         Scene scene = new Scene(root, WindowUtilities.MAIN_VIEW_WINDOW_WIDTH, WindowUtilities.MAIN_VIEW_WINDOW_HEIGHT);
         primaryStage.setResizable(false);
         primaryStage.setScene(scene);
@@ -36,13 +35,12 @@ public class Main extends Application {
     public void init() throws Exception {
         super.init();
         Datasource.getInstance().open();
-        ManagementSystem.getInstance().readFromDatabase();
+
     }
 
     @Override
     public void stop() throws Exception {
         super.stop();
-        ManagementSystem.getInstance().saveToDatabase();
         Datasource.getInstance().close();
     }
 }

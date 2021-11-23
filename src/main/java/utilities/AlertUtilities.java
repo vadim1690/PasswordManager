@@ -11,6 +11,7 @@ public class AlertUtilities {
 
     private static final String DELETE_CONFIRMATION_ALERT_TITLE = "Delete Confirmation Dialog";
     private static final String DELETE_CONFIRMATION_MESSAGE = "Are you sure you want to delete? ";
+    private static final String SQL_ERROR_MESSAGE = "Database error occurred";
 
     public static void errorAlert(String message){
         Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -27,4 +28,12 @@ public class AlertUtilities {
        return alert.showAndWait();
 
     }
+
+    public static void sqlErrorAlert(){
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setContentText(SQL_ERROR_MESSAGE);
+        alert.setHeaderText(null);
+        alert.showAndWait();
+    }
+
 }

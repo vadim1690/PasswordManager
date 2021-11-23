@@ -1,41 +1,29 @@
 package tests;
 
+import model.PasswordStrength;
 import model.User;
-import org.junit.Before;
+import org.junit.Assert;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 public class UserTest {
 
-    User user;
-
-    @Before
-    public void init() {
-        user = new User("Vadim1690", "Tqcv1234");
-    }
-
     @Test
-    public void getUserName() {
-        assertEquals("Vadim1690", user.getUserName());
-    }
+    public void getPasswordStrength() {
 
-    @Test
-    public void getPassword() {
-        assertEquals("Tqcv1234", user.getPassword());
+        String weakPassword = "WeakPassword";
+        String mediumPassword = "MediumPassword1234";
+        String strongPassword = "StrongPassword1234!@#";
 
-    }
+        User user1 = new User("Username1",weakPassword);
+        Assert.assertEquals(PasswordStrength.WEAK,user1.getPasswordStrength());
 
-    @Test
-    public void setInformation() {
-        user.setInformation("Test check!");
-        assertEquals("Test check!", user.getInformation());
-    }
+        User user2 = new User("Username2",mediumPassword);
+        assertEquals(PasswordStrength.MEDIUM,user2.getPasswordStrength());
 
-    @Test
-    public void changePassword() {
-        user.changePassword("Tqcv1690");
-        assertEquals("Tqcv1690", user.getPassword());
+        User user3 = new User("Username3",strongPassword);
+        assertEquals(PasswordStrength.STRONG,user3.getPasswordStrength());
 
     }
 }

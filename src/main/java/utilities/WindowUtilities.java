@@ -15,7 +15,7 @@ public class WindowUtilities {
     public static final String ADD_USER_WINDOW_NAME = "Add User";
 
     public static final double MODIFY_PASSWORD_WINDOW_WIDTH = 700;
-    public static final double MODIFY_PASSWORD_WINDOW_HEIGHT = 580;
+    public static final double MODIFY_PASSWORD_WINDOW_HEIGHT = 590;
     public static final String MODIFY_PASSWORD_WINDOW_NAME = "Modify Password";
 
     public static final double GENERAL_INFORMATION_WINDOW_WIDTH = 1200;

@@ -1,20 +1,24 @@
 package controller;
 
+import exceptions.IllegalPasswordException;
+import exceptions.IllegalUserNameException;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.*;
+import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import model.ManagementSystem;
 import model.User;
 import utilities.AlertUtilities;
 
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.ResourceBundle;
 
 public class AddUserWindowController implements Initializable {
 
-
-    private ListView appsList;
 
     private TableView tableView;
 
@@ -27,8 +31,6 @@ public class AddUserWindowController implements Initializable {
     @FXML
     private TextField tfInformation;
 
-    @FXML
-    private Button addButton;
 
     @FXML
     private Label appName;
@@ -38,28 +40,38 @@ public class AddUserWindowController implements Initializable {
         this.tableView = tableView;
     }
 
-    public void setAppList(ListView appsList) {
-        this.appsList = appsList;
-
-    }
-
     public void setAppName(String officialName) {
         appName.setText(officialName);
     }
 
     @FXML
     public void addUser() {
-        User user;
+
         try {
-            user = ManagementSystem.getInstance().addUserToApplication(appName.getText(), tfUserName.getText(), pfPassword.getText(), tfInformation.getText());
+            checkIllegalUserName(tfUserName.getText());
+            checkIllegalPassword(pfPassword.getText());
+            User user = ManagementSystem.getInstance().addUser(appName.getText(), tfUserName.getText(), pfPassword.getText(), tfInformation.getText());
+            if (user != null)
+                tableView.getItems().add(user);
+            ((Stage) tfUserName.getScene().getWindow()).close();
+        } catch (SQLException e) {
+            AlertUtilities.sqlErrorAlert();
         } catch (Exception e) {
             AlertUtilities.errorAlert(e.getMessage());
-            return;
-        }
-        if (user != null)
-            tableView.getItems().add(user);
-        ((Stage) addButton.getScene().getWindow()).close();
 
+        }
+
+
+    }
+
+    private void checkIllegalUserName(String userName) throws IllegalUserNameException {
+        if (userName == null || userName.isEmpty())
+            throw new IllegalUserNameException();
+    }
+
+    private void checkIllegalPassword(String password) throws IllegalPasswordException {
+        if (password == null || password.isEmpty())
+            throw new IllegalPasswordException();
     }
 
     @Override
@@ -67,7 +79,5 @@ public class AddUserWindowController implements Initializable {
         tfUserName.setFocusTraversable(false);
         pfPassword.setFocusTraversable(false);
         tfInformation.setFocusTraversable(false);
-
-
     }
 }

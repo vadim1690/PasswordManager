@@ -14,13 +14,6 @@ import java.util.ResourceBundle;
 public class GeneralInformationWindowController implements Initializable {
 
 
-
-    @FXML
-    private Button general;
-
-    @FXML
-    private Button passwordStrength;
-
     @FXML
     private Text text;
 
